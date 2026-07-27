@@ -1,13 +1,163 @@
-<!doctype html><html lang="sl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0D2B55"><meta name="description" content="SLMO Portal – rezultati, lestvica in turnirji Severovzhodne lige v mini odbojki."><title>SLMO Portal</title><link rel="icon" href="assets/slmo-logo-symbol.png"><link rel="stylesheet" href="styles.css"></head><body>
-<header class="site-header"><div class="container header-inner"><a class="brand" href="#domov"><img src="assets/slmo-logo-symbol.png" alt="SLMO"><span><strong>SLMO Portal</strong><small>Severovzhodna liga v mini odbojki</small></span></a><button id="menuButton" class="menu-button" aria-expanded="false">☰</button><nav id="mainNav" class="main-nav"><a href="#domov">Domov</a><a href="#lestvica">Lestvica</a><a href="#rezultati">Rezultati</a><a href="#turnirji">Turnirji</a><a href="#ekipe">Ekipe</a></nav></div></header>
-<main>
-<section id="domov" class="hero"><div class="container hero-grid"><div><span class="eyebrow">Sezona <span data-season>2026/27</span></span><h1>Skozi igro, razvoj in prijateljstvo skupaj gradimo prihodnost odbojke.</h1><p>Uradni portal Severovzhodne lige v mini odbojki. Rezultati in lestvica se osvežujejo iz Google Preglednic.</p><div class="hero-actions"><a class="button primary" href="#lestvica">Poglej lestvico</a><a class="button secondary" href="#rezultati">Zadnji rezultati</a></div></div><div class="hero-logo-card"><img src="assets/slmo-logo-horizontal.png" alt="SLMO"></div></div></section>
-<section class="container stat-strip"><article><span>Ekip</span><strong id="teamCount">–</strong></article><article><span>Odigranih tekem</span><strong id="playedCount">–</strong></article><article><span>Vodilna ekipa</span><strong id="leaderName">–</strong></article><article><span>Naslednji turnir</span><strong id="nextTournament">–</strong></article></section>
-<section id="lestvica" class="section"><div class="container"><div class="section-heading"><div><span class="eyebrow">Tekmovanje</span><h2>Lestvica</h2></div><span id="dataStatus" class="status-pill loading">Nalagam podatke …</span></div><div class="table-card"><div class="table-scroll"><table><thead><tr><th>M</th><th>Ekipa</th><th>T</th><th>Z</th><th>P</th><th>Toč</th><th>N+</th><th>N−</th><th>T+</th><th>T−</th><th>K</th></tr></thead><tbody id="standingsBody"></tbody></table></div></div><p class="fine-print">Začasno razvrščanje: zmage, nato ligaške točke, nato količnik točk.</p></div></section>
-<section id="rezultati" class="section alt"><div class="container"><div class="section-heading"><div><span class="eyebrow">Tekme</span><h2>Zadnji rezultati</h2></div><select id="tournamentFilter"><option value="">Vsi turnirji</option></select></div><div id="resultsGrid" class="results-grid"></div></div></section>
-<section id="turnirji" class="section"><div class="container"><div class="section-heading"><div><span class="eyebrow">Koledar</span><h2>Turnirji</h2></div></div><div id="tournamentsGrid" class="tournaments-grid"></div></div></section>
-<section id="ekipe" class="section alt"><div class="container"><div class="section-heading"><div><span class="eyebrow">Udeleženci</span><h2>Ekipe</h2></div></div><div id="teamsGrid" class="teams-grid"></div></div></section>
-</main>
-<footer><div class="container footer-inner"><div class="footer-brand"><img src="assets/slmo-logo-symbol.png" alt=""><span><strong>SLMO Portal 1.0</strong><small>Severovzhodna liga v mini odbojki</small></span></div><p>Podatke upravlja organizator lige v Google Preglednicah.</p></div></footer>
-<template id="resultTemplate"><article class="match-card"><div class="match-meta"><span class="match-tournament"></span><time></time></div><div class="match-teams"><span class="home-team"></span><strong class="match-score"></strong><span class="away-team"></span></div><div class="set-scores"></div><span class="match-status"></span></article></template>
-<script src="config.js"></script><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="sl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0D2B55">
+  <meta name="description" content="SLMO Portal – lestvica, rezultati, turnirji in ekipe Severovzhodne lige v mini odbojki.">
+  <title>SLMO Portal 2.5</title>
+  <link rel="icon" href="assets/slmo-logo-symbol.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#domov" aria-label="SLMO Portal">
+        <img src="assets/slmo-logo-symbol.png" alt="">
+        <span><strong>SLMO Portal</strong><small>Severovzhodna liga v mini odbojki</small></span>
+      </a>
+      <button id="menuButton" class="menu-button" aria-expanded="false" aria-controls="mainNav">☰</button>
+      <nav id="mainNav" class="main-nav">
+        <a href="#domov">Domov</a>
+        <a href="#lestvica">Lestvica</a>
+        <a href="#rezultati">Rezultati</a>
+        <a href="#turnirji">Turnirji</a>
+        <a href="#ekipe">Ekipe</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section id="domov" class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">Sezona <span data-season>–</span></span>
+          <h1>Skozi igro, razvoj in prijateljstvo skupaj gradimo prihodnost odbojke.</h1>
+          <p>Uradni portal Severovzhodne lige v mini odbojki. Podatki se samodejno osvežujejo iz SLMO Centra.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="#lestvica">Poglej lestvico</a>
+            <a class="button secondary" href="#rezultati">Zadnji rezultati</a>
+          </div>
+        </div>
+        <div class="hero-logo-card">
+          <img src="assets/slmo-logo-horizontal.png" alt="SLMO – Severovzhodna liga v mini odbojki">
+        </div>
+      </div>
+    </section>
+
+    <section class="container dashboard" aria-label="Povzetek sezone">
+      <article class="dashboard-card leader-card">
+        <div class="card-icon">🏆</div><span>Vodilna ekipa</span>
+        <button id="leaderButton" class="value-link">–</button>
+      </article>
+      <article class="dashboard-card">
+        <div class="card-icon">📅</div><span>Naslednji turnir</span>
+        <button id="nextTournamentButton" class="value-link">–</button>
+      </article>
+      <article class="dashboard-card">
+        <div class="card-icon">🏐</div><span>Zadnja tekma</span>
+        <strong id="lastMatch">–</strong>
+      </article>
+      <article class="dashboard-card">
+        <div class="card-icon">👥</div><span>Število ekip</span>
+        <strong id="teamCount">–</strong>
+      </article>
+    </section>
+
+    <section class="section home-live">
+      <div class="container home-grid">
+        <article class="panel">
+          <div class="panel-heading"><div><span class="eyebrow">Top 5</span><h2>Trenutna lestvica</h2></div><a href="#lestvica">Celotna lestvica →</a></div>
+          <div id="homeStandings" class="mini-standings"></div>
+        </article>
+        <article class="panel">
+          <div class="panel-heading"><div><span class="eyebrow">Aktualno</span><h2>Zadnji rezultati</h2></div><a href="#rezultati">Vsi rezultati →</a></div>
+          <div id="homeResults" class="home-results"></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="lestvica" class="section alt">
+      <div class="container">
+        <div class="section-heading">
+          <div><span class="eyebrow">Tekmovanje</span><h2>Lestvica</h2></div>
+          <span id="dataStatus" class="status-pill loading">Nalagam podatke …</span>
+        </div>
+        <div class="table-card">
+          <div class="table-scroll">
+            <table>
+              <thead><tr>
+                <th>M</th><th>Ekipa</th><th>T</th><th>Z</th><th>P</th><th>Toč</th>
+                <th>N+</th><th>N−</th><th>T+</th><th>T−</th><th>K</th>
+              </tr></thead>
+              <tbody id="standingsBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <p class="fine-print">Začasno razvrščanje: zmage, nato ligaške točke, nato količnik točk.</p>
+      </div>
+    </section>
+
+    <section id="rezultati" class="section">
+      <div class="container">
+        <div class="section-heading">
+          <div><span class="eyebrow">Tekme</span><h2>Rezultati</h2></div>
+          <select id="tournamentFilter" aria-label="Izberi turnir"><option value="">Vsi turnirji</option></select>
+        </div>
+        <div id="resultsGrid" class="results-grid"></div>
+      </div>
+    </section>
+
+    <section id="turnirji" class="section alt">
+      <div class="container">
+        <div class="section-heading"><div><span class="eyebrow">Koledar</span><h2>Turnirji</h2></div></div>
+        <div id="tournamentsGrid" class="tournaments-grid"></div>
+      </div>
+    </section>
+
+    <section id="ekipe" class="section">
+      <div class="container">
+        <div class="section-heading"><div><span class="eyebrow">Udeleženci</span><h2>Ekipe</h2></div></div>
+        <p class="section-intro">Klikni ekipo za podroben profil, rezultate in statistiko.</p>
+        <div id="teamsGrid" class="teams-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <img src="assets/slmo-logo-symbol.png" alt="">
+        <span><strong>SLMO Portal 2.5</strong><small>Powered by SLMO Center</small></span>
+      </div>
+      <p>© Severovzhodna liga v mini odbojki</p>
+    </div>
+  </footer>
+
+  <dialog id="teamDialog" class="detail-dialog">
+    <button class="dialog-close" data-close-dialog aria-label="Zapri">×</button>
+    <div id="teamDetail"></div>
+  </dialog>
+
+  <dialog id="tournamentDialog" class="detail-dialog wide">
+    <button class="dialog-close" data-close-dialog aria-label="Zapri">×</button>
+    <div id="tournamentDetail"></div>
+  </dialog>
+
+  <template id="resultTemplate">
+    <article class="match-card">
+      <div class="match-meta"><button class="link-button match-tournament"></button><time></time></div>
+      <div class="match-teams">
+        <button class="link-button team-button home-team"></button>
+        <strong class="match-score"></strong>
+        <button class="link-button team-button away-team"></button>
+      </div>
+      <div class="set-scores"></div>
+      <span class="match-status"></span>
+    </article>
+  </template>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

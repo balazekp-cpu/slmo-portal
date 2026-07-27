@@ -1,20 +1,24 @@
-# SLMO Portal 1.0
+# SLMO Portal 2.5
 
-Brezplačen statični spletni portal, ki bere podatke iz Google Preglednic.
+Nadgradnja vključuje:
+- profesionalno naslovnico s top 5 lestvico in zadnjimi rezultati;
+- medalje pri prvih treh ekipah;
+- klik na ekipo in podroben profil ekipe;
+- klik na turnir in podroben prikaz turnirja;
+- izboljšane kartice rezultatov;
+- mobilni prikaz.
 
-## Povezava s preglednico
-1. V URL-ju Google Preglednice kopiraj del med `/d/` in `/edit`.
-2. V `config.js` zamenjaj `VNESI_ID_GOOGLE_PREGLEDNICE` z ID-jem.
-3. Preglednico deli kot **Vsi s povezavo – Gledalec**.
+## Nadgradnja obstoječega GitHub portala
 
-Portal pričakuje liste: `Lestvica`, `Tekme`, `Turnirji`, `Ekipe`, `Nastavitve`.
+Ker že imaš pravilno nastavljen `config.js`, ga ne prepisuj.
 
-## Brezplačna objava
-### GitHub Pages
-Naloži vse datoteke v javni GitHub repozitorij in v **Settings → Pages** izberi vejo `main` in mapo `/root`.
+V GitHub repozitoriju zamenjaj oziroma naloži:
+- `index.html`
+- `styles.css`
+- `app.js`
+- mapo `assets` (po potrebi)
+- `README.md`
 
-### Netlify
-V Netlify izberi **Add new site → Deploy manually** in povleci celotno mapo portala.
+Datoteka `config.example.js` je samo vzorec. Tvoj obstoječi `config.js` naj ostane v repozitoriju.
 
-## Logotipi ekip
-Na listu `Ekipe` v stolpec `LOGOTIP / URL` vpiši neposreden javni URL PNG/JPG logotipa.
+Po nalaganju počakaj približno 1–2 minuti in stran osveži s `Ctrl + F5`.
