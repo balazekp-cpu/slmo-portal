@@ -17,11 +17,33 @@ async function loadData(){
 }
 const findTeam=name=>state.teams.find(t=>t.name===name)||{name,place:"",abbr:String(name).slice(0,3)};
 const standingFor=name=>state.standings.find(s=>s.team===name)||{place:"–",played:0,wins:0,losses:0,points:0,setsFor:0,setsAgainst:0,scoreFor:0,scoreAgainst:0,ratio:0};
+const initialsFor=name=>{
+  const t=findTeam(name);
+  return String(t.abbr||name||"???").trim().slice(0,3).toUpperCase();
+};
+const logoHTML=(name,cls="team-inline-logo")=>{
+  const t=findTeam(name);
+  return t.logo
+    ? `<img class="${cls}" src="${esc(t.logo)}" alt="Logotip ${esc(name)}" loading="lazy" onerror="this.outerHTML='<span class=&quot;team-inline-initials&quot;>${esc(initialsFor(name))}</span>'">`
+    : `<span class="${cls.replace("logo","initials")}">${esc(initialsFor(name))}</span>`;
+};
+
 const teamMatches=name=>state.matches.filter(m=>m.home===name||m.away===name);
 function teamWon(m,name){if(!m.result)return false;const [a,b]=m.result.split(":").map(Number);return m.home===name?a>b:b>a}
+function formScore(name){
+  return teamMatches(name).filter(m=>m.status==="Končana").slice(-5).reduce((sum,m,i)=>sum+(teamWon(m,name)?2:0)+(i/100),0);
+}
+function bestFormTeam(){
+  return state.teams.slice().sort((a,b)=>formScore(b.name)-formScore(a.name))[0]||null;
+}
+function nextMatchFor(name){
+  return teamMatches(name).find(m=>m.status!=="Končana")||null;
+}
 function render(){
  document.querySelectorAll("[data-season]").forEach(x=>x.textContent=state.season);
  document.getElementById("teamCount").textContent=state.teams.length;
+ const formTeam=bestFormTeam(),fb=document.getElementById("formTeamButton");
+ if(fb){fb.innerHTML=formTeam?`${logoHTML(formTeam.name)}<span>${esc(formTeam.name)}</span>`:"–";fb.onclick=()=>formTeam&&openTeam(formTeam.name);}
  const leader=state.standings[0];document.getElementById("leaderButton").textContent=leader?.team||"–";document.getElementById("leaderButton").onclick=()=>leader&&openTeam(leader.team);
  const next=state.tournaments.find(t=>t.status==="Načrtovan"||t.status==="V teku")||state.tournaments.at(-1);const nb=document.getElementById("nextTournamentButton");nb.textContent=next?`${next.name}${next.date?` · ${next.date}`:""}`:"–";nb.onclick=()=>next&&openTournament(next.name);
  const last=state.matches.filter(m=>m.status==="Končana").at(-1);document.getElementById("lastMatch").textContent=last?`${last.home} ${last.result} ${last.away}`:"–";
@@ -29,16 +51,17 @@ function render(){
  const ds=document.getElementById("dataStatus");ds.textContent="Povezano z Google Preglednicami";ds.className="status-pill live";
 }
 function renderHome(){
- document.getElementById("homeStandings").innerHTML=state.standings.slice(0,5).map(r=>`<div class="mini-row"><span class="rank-medal">${medal(r.place)}</span><button class="mini-team" data-team="${esc(r.team)}">${esc(r.team)}</button><span class="mini-points">${r.points} toč.</span></div>`).join("")||'<p class="empty">Lestvica še ni na voljo.</p>';
- document.getElementById("homeResults").innerHTML=state.matches.filter(m=>m.status==="Končana").slice(-5).reverse().map(m=>`<div class="home-result"><span>${esc(m.home)}</span><strong>${esc(m.result)}</strong><span>${esc(m.away)}</span></div>`).join("")||'<p class="empty">Tekme še niso odigrane.</p>';
+ document.getElementById("homeStandings").innerHTML=state.standings.slice(0,5).map(r=>`<div class="mini-row"><span class="rank-medal">${medal(r.place)}</span><button class="mini-team" data-team="${esc(r.team)}">${logoHTML(r.team,"mini-logo")}<span>${esc(r.team)}</span></button><span class="mini-points">${r.points} toč.</span></div>`).join("")||'<p class="empty">Lestvica še ni na voljo.</p>';
+ document.getElementById("homeResults").innerHTML=state.matches.filter(m=>m.status==="Končana").slice(-5).reverse().map(m=>`<div class="home-result"><span class="team-inline">${logoHTML(m.home)}<span>${esc(m.home)}</span></span><strong>${esc(m.result)}</strong><span class="team-inline" style="justify-content:flex-end"><span>${esc(m.away)}</span>${logoHTML(m.away)}</span></div>`).join("")||'<p class="empty">Tekme še niso odigrane.</p>';
 }
 function renderStandings(){
- document.getElementById("standingsBody").innerHTML=state.standings.map(r=>`<tr><td>${medal(r.place)}</td><td><button class="standing-team" data-team="${esc(r.team)}">${esc(r.team)}</button></td><td>${r.played}</td><td>${r.wins}</td><td>${r.losses}</td><td><strong>${r.points}</strong></td><td>${r.setsFor}</td><td>${r.setsAgainst}</td><td>${r.scoreFor}</td><td>${r.scoreAgainst}</td><td>${Number(r.ratio).toFixed(3)}</td></tr>`).join("");
+ document.getElementById("standingsBody").innerHTML=state.standings.map(r=>`<tr><td>${medal(r.place)}</td><td><button class="standing-team" data-team="${esc(r.team)}">${logoHTML(r.team)}<span>${esc(r.team)}</span></button></td><td>${r.played}</td><td>${r.wins}</td><td>${r.losses}</td><td><strong>${r.points}</strong></td><td>${r.setsFor}</td><td>${r.setsAgainst}</td><td>${r.scoreFor}</td><td>${r.scoreAgainst}</td><td>${Number(r.ratio).toFixed(3)}</td></tr>`).join("");
 }
 function renderResults(){
  const f=document.getElementById("tournamentFilter").value,data=state.matches.filter(m=>!f||m.tournament===f).slice().reverse();
  const grid=document.getElementById("resultsGrid");grid.innerHTML="";if(!data.length){grid.innerHTML='<p class="empty">Rezultati še niso objavljeni.</p>';return}
- data.forEach(m=>{const n=document.getElementById("resultTemplate").content.cloneNode(true);const tb=n.querySelector(".match-tournament");tb.textContent=m.tournament;tb.dataset.tournament=m.tournament;n.querySelector("time").textContent=[m.date,m.time].filter(Boolean).join(" · ");const h=n.querySelector(".home-team"),a=n.querySelector(".away-team");h.textContent=m.home;h.dataset.team=m.home;a.textContent=m.away;a.dataset.team=m.away;n.querySelector(".match-score").textContent=m.result||"–";n.querySelector(".set-scores").innerHTML=m.sets.map(s=>`<span>${esc(s)}</span>`).join("");n.querySelector(".match-status").textContent=m.status;grid.appendChild(n)});
+ data.forEach(m=>{const n=document.getElementById("resultTemplate").content.cloneNode(true);const tb=n.querySelector(".match-tournament");tb.textContent=m.tournament;tb.dataset.tournament=m.tournament;n.querySelector("time").textContent=[m.date,m.time].filter(Boolean).join(" · ");const h=n.querySelector(".home-team"),a=n.querySelector(".away-team");h.innerHTML=`<span class="match-team-visual">${logoHTML(m.home,"match-team-logo")}<span>${esc(m.home)}</span></span>`;h.dataset.team=m.home;
+a.innerHTML=`<span class="match-team-visual away"><span>${esc(m.away)}</span>${logoHTML(m.away,"match-team-logo")}</span>`;a.dataset.team=m.away;n.querySelector(".match-score").textContent=m.result||"–";n.querySelector(".set-scores").innerHTML=m.sets.map(s=>`<span>${esc(s)}</span>`).join("");const status=n.querySelector(".match-status");status.textContent=m.status;status.classList.toggle("pending",m.status!=="Končana");grid.appendChild(n)});
 }
 function renderTournaments(){
  const g=document.getElementById("tournamentsGrid");g.innerHTML=state.tournaments.length?state.tournaments.map(t=>`<button class="tournament-card" data-tournament="${esc(t.name)}"><span class="badge">${esc(t.status||"Načrtovan")}</span><h3>${esc(t.name)}</h3><p><strong>${esc(t.date||"Datum še ni določen")}</strong></p><p>${t.host?`Gostitelj: ${esc(t.host)}`:"Gostitelj še ni določen"}</p><p>${esc([t.hall,t.place].filter(Boolean).join(", "))}</p></button>`).join(""):'<p class="empty">Turnirji še niso vpisani.</p>';
@@ -48,9 +71,10 @@ function renderTeams(){
 }
 function buildFilter(){const s=document.getElementById("tournamentFilter"),old=s.value,n=[...new Set(state.matches.map(m=>m.tournament).filter(Boolean))];s.innerHTML='<option value="">Vsi turnirji</option>'+n.map(x=>`<option>${esc(x)}</option>`).join("");s.value=n.includes(old)?old:""}
 function openTeam(name){
- const t=findTeam(name),s=standingFor(name),matches=teamMatches(name),form=matches.filter(m=>m.status==="Končana").slice(-5).map(m=>teamWon(m,name));
- const rows=matches.slice().reverse().slice(0,10).map(m=>{const opp=m.home===name?m.away:m.home;return `<div class="detail-match"><span>${esc(m.date)}</span><span>${esc(opp)}</span><strong>${esc(m.result||"–")}</strong><span class="right">${esc(m.sets.join(" · "))}</span></div>`}).join("")||'<p class="empty">Ni vpisanih tekem.</p>';
- document.getElementById("teamDetail").innerHTML=`<div class="detail-hero"><div class="detail-hero-inner">${t.logo?`<img class="detail-logo" src="${esc(t.logo)}" alt="">`:`<div class="detail-initials">${esc((t.abbr||name.slice(0,3)).toUpperCase())}</div>`}<div><span class="eyebrow">${s.place}. mesto</span><h2>${esc(name)}</h2><p>${esc(t.place||"")}</p></div></div></div><div class="detail-body"><div class="profile-stats"><div class="profile-stat"><span>Tekme</span><strong>${s.played}</strong></div><div class="profile-stat"><span>Zmage</span><strong>${s.wins}</strong></div><div class="profile-stat"><span>Porazi</span><strong>${s.losses}</strong></div><div class="profile-stat"><span>Točke</span><strong>${s.points}</strong></div><div class="profile-stat"><span>Nizi</span><strong>${s.setsFor}:${s.setsAgainst}</strong></div><div class="profile-stat"><span>Točke nizov</span><strong>${s.scoreFor}:${s.scoreAgainst}</strong></div><div class="profile-stat"><span>Količnik</span><strong>${Number(s.ratio).toFixed(3)}</strong></div><div class="profile-stat"><span>Forma</span><div class="form-strip">${form.map(w=>`<span class="form-dot ${w?"form-win":"form-loss"}">${w?"Z":"P"}</span>`).join("")||"–"}</div></div></div><h3>Zadnje tekme</h3>${rows}</div>`;
+ const t=findTeam(name),s=standingFor(name),matches=teamMatches(name),completed=matches.filter(m=>m.status==="Končana"),form=completed.slice(-5).map(m=>teamWon(m,name)),next=nextMatchFor(name);
+ const rows=matches.slice().reverse().slice(0,10).map(m=>{const opp=m.home===name?m.away:m.home,won=m.status==="Končana"?teamWon(m,name):null;return `<div class="detail-match"><span>${esc(m.date)}</span><span class="team-inline">${logoHTML(opp)}<span>${esc(opp)}</span></span><strong class="result-outcome ${won===true?"outcome-win":won===false?"outcome-loss":""}">${esc(m.result||"–")}</strong><span class="right">${esc(m.sets.join(" · "))}</span></div>`}).join("")||'<p class="empty">Ni vpisanih tekem.</p>';
+ const nextCard=next?`<div class="next-match-card"><span>Naslednja tekma</span><strong>${esc(next.home)} – ${esc(next.away)}</strong><small>${esc([next.tournament,next.date,next.time].filter(Boolean).join(" · "))}</small></div>`:`<div class="next-match-card"><span>Naslednja tekma</span><strong>Še ni določena</strong><small>Razpored bo objavljen naknadno.</small></div>`;
+ document.getElementById("teamDetail").innerHTML=`<div class="detail-hero"><div class="detail-hero-inner">${t.logo?`<img class="detail-logo" src="${esc(t.logo)}" alt="">`:`<div class="detail-initials">${esc((t.abbr||name.slice(0,3)).toUpperCase())}</div>`}<div><span class="eyebrow">${s.place}. mesto</span><h2>${esc(name)}</h2><p>${esc(t.place||"")}</p></div></div></div><div class="detail-body"><div class="profile-stats"><div class="profile-stat"><span>Tekme</span><strong>${s.played}</strong></div><div class="profile-stat"><span>Zmage</span><strong>${s.wins}</strong></div><div class="profile-stat"><span>Porazi</span><strong>${s.losses}</strong></div><div class="profile-stat"><span>Točke</span><strong>${s.points}</strong></div><div class="profile-stat"><span>Nizi</span><strong>${s.setsFor}:${s.setsAgainst}</strong></div><div class="profile-stat"><span>Točke nizov</span><strong>${s.scoreFor}:${s.scoreAgainst}</strong></div><div class="profile-stat"><span>Količnik</span><strong>${Number(s.ratio).toFixed(3)}</strong></div><div class="profile-stat"><span>Uspešnost</span><strong>${s.played?Math.round((s.wins/s.played)*100):0}%</strong></div></div><div class="profile-highlight"><div class="profile-panel"><h3>Forma zadnjih tekem</h3><div class="form-strip">${form.map(w=>`<span class="form-dot ${w?"form-win":"form-loss"}">${w?"Z":"P"}</span>`).join("")||"–"}</div><p class="fine-print">Z = zmaga, P = poraz</p></div>${nextCard}</div><h3>Zadnje tekme</h3>${rows}</div>`;
  document.getElementById("teamDialog").showModal();
 }
 function openTournament(name){

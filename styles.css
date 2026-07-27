@@ -29,3 +29,93 @@ select{padding:11px 14px;border:1px solid var(--border);border-radius:10px;backg
 .tournament-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}.summary-box{background:var(--background);border-radius:14px;padding:15px}.summary-box span{display:block;color:var(--muted);font-size:.8rem}.summary-box strong{display:block;color:var(--navy);margin-top:4px}.tournament-matches{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.compact-match{background:var(--background);border-radius:14px;padding:15px}.compact-match div{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;font-weight:900}.compact-match div span:last-child{text-align:right}.compact-match small{display:block;color:var(--muted);margin-top:8px}
 @media(max-width:900px){.menu-button{display:block}.main-nav{display:none;position:absolute;left:0;right:0;top:76px;background:var(--navy);padding:12px 16px;flex-direction:column}.main-nav.open{display:flex}.hero-grid{grid-template-columns:1fr}.hero-logo-card{max-width:540px}.dashboard{grid-template-columns:repeat(2,1fr)}.home-grid{grid-template-columns:1fr}.results-grid,.tournaments-grid,.teams-grid{grid-template-columns:1fr 1fr}.profile-stats{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.brand small{display:none}.hero{padding-top:56px}.dashboard{grid-template-columns:1fr 1fr}.section{padding:60px 0}.results-grid,.tournaments-grid,.teams-grid{grid-template-columns:1fr}.section-heading{align-items:flex-start;flex-direction:column}.footer-inner{align-items:flex-start;flex-direction:column}.match-teams{font-size:.9rem}.detail-match{grid-template-columns:85px 1fr auto 1fr;font-size:.85rem}.tournament-summary,.tournament-matches{grid-template-columns:1fr}}
+
+
+/* ===== SLMO Portal 3.0 Alpha: visual system + club logos ===== */
+:root{
+  --radius-xl:26px;
+  --transition:180ms cubic-bezier(.2,.8,.2,1);
+}
+body{background:
+  radial-gradient(circle at 12% 0%,rgba(36,88,168,.08),transparent 28rem),
+  var(--background)
+}
+.site-header{border-bottom:1px solid rgba(255,255,255,.08)}
+.hero{position:relative;overflow:hidden}
+.hero::after{
+  content:"";position:absolute;width:420px;height:420px;border-radius:50%;
+  right:-160px;bottom:-250px;background:rgba(255,138,0,.12);pointer-events:none
+}
+.dashboard-card,.panel,.table-card,.match-card,.tournament-card,.team-card{
+  transition:transform var(--transition),box-shadow var(--transition),border-color var(--transition)
+}
+.dashboard-card:hover,.panel:hover,.match-card:hover,.tournament-card:hover,.team-card:hover{
+  transform:translateY(-4px);box-shadow:0 22px 55px rgba(13,43,85,.15)
+}
+.team-inline{display:inline-flex;align-items:center;gap:10px;min-width:0}
+.team-inline-logo{
+  width:34px;height:34px;object-fit:contain;border-radius:9px;background:#fff;
+  border:1px solid var(--border);padding:3px;flex:0 0 auto
+}
+.team-inline-initials{
+  width:34px;height:34px;border-radius:9px;background:var(--blue);color:#fff;
+  display:inline-grid;place-items:center;font-size:.68rem;font-weight:900;flex:0 0 auto
+}
+.standing-team{display:inline-flex;align-items:center;gap:10px}
+.match-team-visual{display:flex;align-items:center;gap:10px;min-width:0}
+.match-team-visual.away{justify-content:flex-end;text-align:right}
+.match-team-logo{
+  width:54px;height:54px;object-fit:contain;border-radius:13px;background:#fff;
+  border:1px solid var(--border);padding:5px
+}
+.match-team-initials{
+  width:54px;height:54px;border-radius:13px;background:var(--blue);color:#fff;
+  display:grid;place-items:center;font-weight:900
+}
+.match-card{border-left:0;border-top:4px solid var(--orange)}
+.match-teams{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)}
+.team-card{min-height:108px;border:1px solid transparent}
+.team-card:hover{border-color:rgba(36,88,168,.24)}
+.team-logo{width:74px;height:74px;border-radius:18px}
+.team-initials{width:74px;height:74px;border-radius:18px}
+.mini-team{display:inline-flex;align-items:center;gap:9px}
+.mini-logo{width:28px;height:28px;object-fit:contain;border-radius:8px;background:#fff;border:1px solid var(--border);padding:2px}
+.release-chip{
+  display:inline-flex;align-items:center;padding:7px 10px;border-radius:999px;
+  background:rgba(255,255,255,.12);color:#fff;font-size:.75rem;font-weight:900
+}
+@media(max-width:600px){
+  .match-team-logo,.match-team-initials{width:43px;height:43px}
+  .match-team-visual{flex-direction:column;text-align:center;gap:6px}
+  .match-team-visual.away{flex-direction:column-reverse;text-align:center}
+}
+
+
+/* ===== SLMO Portal 3.0 Beta: richer profiles + result experience ===== */
+.dashboard{grid-template-columns:repeat(5,1fr)}
+.form-card{border-top-color:#E54B4B}
+.match-card{position:relative;overflow:hidden}
+.match-card::after{
+  content:"";position:absolute;inset:auto -60px -80px auto;width:150px;height:150px;
+  border-radius:50%;background:rgba(36,88,168,.05);pointer-events:none
+}
+.match-score{min-width:70px;text-align:center}
+.match-status{padding:6px 9px;border-radius:999px;background:#DDF2E5}
+.match-status.pending{background:#FFF1CC;color:#8A5B00}
+.profile-stats{grid-template-columns:repeat(4,1fr)}
+.profile-highlight{
+  display:grid;grid-template-columns:1.15fr .85fr;gap:18px;margin-bottom:25px
+}
+.profile-panel{background:var(--background);border-radius:18px;padding:18px}
+.profile-panel h3{margin-top:0}
+.next-match-card{
+  background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border-radius:18px;padding:20px
+}
+.next-match-card span{display:block;color:#dce9f8;font-size:.82rem}
+.next-match-card strong{display:block;font-size:1.25rem;margin:7px 0}
+.next-match-card small{color:#e6effa}
+.result-outcome{font-weight:900}
+.outcome-win{color:var(--green)}.outcome-loss{color:var(--red)}
+.detail-match{border-radius:10px}.detail-match:hover{background:var(--background)}
+@media(max-width:1100px){.dashboard{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:750px){.dashboard{grid-template-columns:repeat(2,1fr)}.profile-highlight{grid-template-columns:1fr}}
